@@ -1,7 +1,8 @@
 # фреймворк
-Django>=4.1.1,<4.2.0
+Django>=5
 
-
+django-debug-toolbar
+pillow
 # Пакеты для тестирования
 pytest
 pytest-django
