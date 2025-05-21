@@ -146,46 +146,46 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "users.User"
 
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "main_format": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "console_store": {
-            "class": "logging.StreamHandler",
-            "formatter": "main_format",
-        },
-        "file_store": {
-            "class": "logging.FileHandler",
-            "formatter": "main_format",
-            "filename": "../logs/ads.log"
-        },
-        "console_blog": {
-            "class": "logging.StreamHandler",
-            "formatter": "main_format",
-        },
-        "file_blog": {
-            "class": "logging.FileHandler",
-            "formatter": "main_format",
-            "filename": "../logs/users.log"
-        },
-    },
-    "loggers": {
-        "ads": {
-            "handlers": ["console_store", "file_store"],
-            "level": "INFO",
-            "propagate": True,
-        },
-        "users": {
-            "handlers": ["console_blog", "file_blog"],
-            "level": "INFO",
-            "propagate": True,
-        },
-    },
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "main_format": {
+#             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+#             "style": "{",
+#         },
+#     },
+#     "handlers": {
+#         "console_store": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "main_format",
+#         },
+#         "file_store": {
+#             "class": "logging.FileHandler",
+#             "formatter": "main_format",
+#             "filename": "../logs/ads.log"
+#         },
+#         "console_blog": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "main_format",
+#         },
+#         "file_blog": {
+#             "class": "logging.FileHandler",
+#             "formatter": "main_format",
+#             "filename": "../logs/users.log"
+#         },
+#     },
+#     "loggers": {
+#         "ads": {
+#             "handlers": ["console_store", "file_store"],
+#             "level": "INFO",
+#             "propagate": True,
+#         },
+#         "users": {
+#             "handlers": ["console_blog", "file_blog"],
+#             "level": "INFO",
+#             "propagate": True,
+#         },
+#     },
+# }
 
