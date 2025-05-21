@@ -1,0 +1,132 @@
+networks:
+  over-voltage:
+
+
+services:
+  # сервис основного приложения
+  app:
+    build: .
+    image: over-voltage
+    container_name: app
+    env_file:
+      - .env
+    volumes:
+      - ./src:/src
+      - ./logs:/logs
+      - ./docs:/docs
+    working_dir: /src/
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    networks:
+      - over-voltage
+    links:
+      - db
+    depends_on:
+      - db
+
+  # база данных
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data_sample:/var/lib/postgresql/data/
+    ports:
+      - "55432:5432"
+    # https://docs.docker.com/compose/compose-file/compose-file-v3/#healthcheck
+    healthcheck:
+      # https://www.postgresql.org/docs/current/app-pg-isready.html
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: on-failure
+    networks:
+      - over-voltage
+
+  # СУБД Redis (кэширование и брокер сообщений для Celery)
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    environment:
+      - REDIS_CONFIG=vm-overcommit-memory yes
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    restart: on-failure
+    networks:
+      - over-voltage
+
+  # сервис распределенной очереди задач Celery
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - ./src:/src
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - over-voltage
+
+  # сервис для выполнения периодических заданий Celery Beat
+  celery-beat:
+    build: .
+    container_name: celery-beat
+    command: celery -A core beat -l info -S django --pidfile=/tmp/celerybeat.pid --schedule=/tmp/celerybeat-schedule
+    volumes:
+      - ./src:/src
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+      celery:
+        condition: service_started
+    tmpfs: /tmp
+    restart: on-failure
+    networks:
+      - over-voltage
+
+  # мониторинг периодических задач Flower
+  flower:
+    image: mher/flower:0.9.7
+    container_name: flower
+    command: [ "flower", "--broker=redis://redis:6379", "--port=5555" ]
+    ports:
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_started
+    restart: on-failure
+    networks:
+      - over-voltage
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@root.ru
+      PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+      - over-voltage
+
+volumes:
+  postgres_data_sample:

@@ -1,0 +1,16 @@
+# фреймворк
+Django>=4.1.1,<4.2.0
+
+
+# Пакеты для тестирования
+pytest
+pytest-django
+pytest-cov
+pytest-env
+
+# Пакет для работы с env
+python-dotenv
+django-environ
+
+# Для работы с БД Postgres
+# psycopg2-binary
