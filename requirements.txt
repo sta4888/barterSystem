@@ -1,6 +1,7 @@
 # фреймворк
 Django>=5
-
+djangorestframework
+drf-spectacular
 django-debug-toolbar
 pillow
 # Пакеты для тестирования

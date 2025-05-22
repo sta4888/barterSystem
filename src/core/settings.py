@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 from environ import Env
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +21,6 @@ DEBUG = env("DEBUG", default=False)
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 PREREQ_APPS = [
@@ -35,19 +35,18 @@ PREREQ_APPS = [
 PROJECT_APPS = [
     "users.apps.UsersConfig",
     "ads.apps.AdsConfig",
-
+    "api.apps.ApiConfig",
 ]
-
 
 THIRD_PARTY_APPS = [
+    "rest_framework",
+    'drf_spectacular',
 ]
-
 
 if DEBUG:
     THIRD_PARTY_APPS.append("debug_toolbar")
 
 INSTALLED_APPS = PREREQ_APPS + PROJECT_APPS + THIRD_PARTY_APPS
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,6 +64,7 @@ if DEBUG:
 
 def show_toolbar(request):
     return DEBUG
+
 
 ROOT_URLCONF = 'core.urls'
 
@@ -86,6 +86,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',  # <--- добавь это
+}
+
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Ads API',
+    'DESCRIPTION': 'Обмен объявлениями: создание, просмотр, предложения обмена и статусы',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -100,8 +119,6 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": env.db(),
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -121,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -133,8 +149,6 @@ TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 
 USE_TZ = True
-
-
 
 # Media and Static settings
 MEDIA_URL = "/static/media/"
@@ -149,7 +163,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static", "static")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
-
 
 LOGGING = {
     "version": 1,
@@ -193,4 +206,3 @@ LOGGING = {
         },
     },
 }
-

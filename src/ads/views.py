@@ -1,15 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import get_object_or_404
 from django.views.generic import (
     CreateView, UpdateView, DeleteView, ListView, DetailView, View
 )
 from django.urls import reverse_lazy
 from django.db.models import Q
 
-from .models import Ad, ExchangeProposal, Category
+from .models import Ad, Category, ExchangeProposal
 
 
-# ---------- ОБЪЯВЛЕНИЯ ---------- #
+
 
 class AdCreateView(LoginRequiredMixin, CreateView):
     model = Ad
@@ -82,7 +81,7 @@ class AdDetailView(DetailView):
     context_object_name = 'ad'
 
 
-# ---------- ПРЕДЛОЖЕНИЯ ОБМЕНА ---------- #
+
 
 class ExchangeProposalCreateView(LoginRequiredMixin, CreateView):
     model = ExchangeProposal
