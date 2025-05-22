@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Объявления</h1>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Поиск..." value="{{ request.GET.q }}">
+    <select name="category">
+        <option value="">Все категории</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}" {% if selected_category_id == category.id %}selected{% endif %}>
+                {{ category.title }}
+            </option>
+        {% endfor %}
+    </select>
+
+
+    <select name="condition">
+        <option value="">Все состояния</option>
+        {% for val, name in conditions %}
+            <option value="{{ val }}" {% if request.GET.condition == val %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Фильтровать</button>
+</form>
+
+<ul>
+    {% for ad in ads %}
+    <li>
+        <a href="{% url 'ads:ad-detail' ad.pk %}">{{ ad.title }}</a>
+        <p>{{ ad.get_condition_display }} — {{ ad.category.title }}</p>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'ads:ad-create' %}">+ Добавить объявление</a>
+
+{% endblock %}

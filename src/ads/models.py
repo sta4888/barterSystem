@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+
 from users.models import User
 from .mixins import TimestampMixin
 
@@ -30,6 +32,9 @@ class Ad(TimestampMixin):
         choices=CONDITION_CHOICES,
         verbose_name="Состояние товара"
     )
+
+    def get_absolute_url(self):
+        return reverse('ads:ad-detail', args=[str(self.pk)])
 
     def __str__(self):
         return self.title

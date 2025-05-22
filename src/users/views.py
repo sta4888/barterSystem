@@ -15,7 +15,7 @@ class RegisterView(View):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("ads:home")  # замените на нужную страницу
+            return redirect("ads:ad-list")  # замените на нужную страницу
         return render(request, "users/register.html", {"form": form})
 
 
@@ -29,7 +29,7 @@ class LoginView(View):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("ads:home")  # замените на нужную страницу
+            return redirect("ads:ad-list")  # замените на нужную страницу
         return render(request, "users/login.html", {"form": form})
 
 

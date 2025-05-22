@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Предложения обмена</h1>
+
+<ul>
+    {% for proposal in proposals %}
+    <li>
+        <p>
+            <strong>{{ proposal.ad_sender.title }}</strong> ↔ <strong>{{ proposal.ad_receiver.title }}</strong><br>
+            Статус: {{ proposal.status }}<br>
+            Комментарий: {{ proposal.comment }}
+        </p>
+        {% if user == proposal.ad_receiver.user and proposal.status == "ожидает" %}
+            <a href="{% url 'ads:exchange-update' proposal.pk %}">Ответить</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'ads:ad-list' %}">← Назад к объявлениям</a>
+{% endblock %}
