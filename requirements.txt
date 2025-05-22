@@ -14,4 +14,4 @@ python-dotenv
 django-environ
 
 # Для работы с БД Postgres
-# psycopg2-binary
+psycopg2-binary
